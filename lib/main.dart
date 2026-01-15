@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      color: Colors.blue,
       debugShowCheckedModeBanner: false,
       title: 'Material App',
       home: AuthPage(),

@@ -4,21 +4,22 @@ import 'package:flutter_application_1/components/my_button.dart';
 import 'package:flutter_application_1/components/my_textfield.dart';
 import 'package:flutter_application_1/components/square_tile.dart';
 
-class HomePage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   final Function()? onTap;
 
-  const HomePage({super.key, this.onTap});
+  const RegisterPage({super.key, this.onTap});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _RegisterPageState extends State<RegisterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
 
-  // SIGN IN METHOD
-  void signUserIn() async {
+  // SIGN UP METHOD
+  void signUserUp() async {
     // show loading
     showDialog(
       context: context,
@@ -28,12 +29,18 @@ class _HomePageState extends State<HomePage> {
       },
     );
 
+    // confirm passwords match
+    if (passwordController.text != confirmPasswordController.text) {
+      Navigator.pop(context);
+      showErrorMessage('Las contraseñas no coinciden');
+      return;
+    }
+
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-
       Navigator.pop(context); // close loading
     } on FirebaseAuthException catch (e) {
       Navigator.pop(context); // close loading
@@ -75,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(height: 50),
 
                 Text(
-                  'Bienvenido Nuevamente, te extrañamos!!',
+                  'Crea tu cuenta',
                   style: TextStyle(color: Colors.grey[700], fontSize: 16),
                 ),
 
@@ -95,21 +102,17 @@ class _HomePageState extends State<HomePage> {
                   obscureText: true,
                 ),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 25),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: const [
-                      Text('Olvidaste la contraseña?'),
-                    ],
-                  ),
+                MyTextfield(
+                  controller: confirmPasswordController,
+                  hinText: 'Confirme la Contraseña',
+                  obscureText: true,
                 ),
 
-                const SizedBox(height: 15),
+                const SizedBox(height: 20),
 
-                MyButton(onTap: signUserIn, text: 'Acceder',),
+                MyButton(onTap: signUserUp, text: 'Registrar',),
 
                 const SizedBox(height: 20),
 
@@ -153,12 +156,12 @@ class _HomePageState extends State<HomePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('No eres un usuario'),
+                    const Text('Ya tienes una cuenta'),
                     const SizedBox(width: 5),
                     GestureDetector(
                       onTap: widget.onTap,
                       child: const Text(
-                        'Regístrate Ahora',
+                        'Ir al Login Ahora',
                         style: TextStyle(
                           color: Color.fromARGB(255, 80, 158, 222),
                           fontWeight: FontWeight.bold,
